@@ -1,0 +1,190 @@
+#include <iostream>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+
+class node  
+{  
+public: 
+    int key;  
+    int size;
+    node *left, *right, *parent;
+    
+    node (int key){
+        this->size = 1;
+        this->key = key;  
+        this->left = this->right = this->parent = nullptr;  
+    }
+    node(node * left, int  key, node * right){
+        this->size = 1;
+        this->key = key;  
+        this->parent = nullptr;
+        this->left = left;
+        this->right = right;
+        if(this->left != nullptr)
+            this->left->parent = this;
+        if(this->right != nullptr)
+            this->right->parent = this;  
+    }
+    void passdown(){
+
+    }
+    void update(){
+        int size = 1;
+        if(this->left != nullptr)
+            size += this->left->size;
+        if(this->right != nullptr)
+            size += this->right->size;
+        this->size = size;
+    }
+};  
+
+
+class SplayTree{
+public:
+    node * root;
+    SplayTree(){
+        root = nullptr;
+    }
+    node *rightRotate(node *x)  
+    {  
+        node *y = x->left;
+        if(x->parent != nullptr)
+            x->parent->passdown();
+        x->passdown(); 
+        y->passdown();
+        x->left = y->right;
+        if(y->right != nullptr){
+            y->right->parent = x;
+        }
+        
+        y->parent = x->parent;
+        if(x->parent == nullptr)
+            this->root = y;
+        else if (x == x->parent->right)
+            x->parent->right = y;
+        else
+            x->parent->left = y;
+        y->right = x;
+        x->parent = y;  
+        x->update();
+        y->update();
+        if(y->parent != nullptr)
+            y->parent->update();
+        return y;  
+    }  
+
+    node *leftRotate(node *x)  
+    {  
+        node *y = x->right;
+        if(x->parent != nullptr)
+            x->parent->passdown();
+        x->passdown(); 
+        y->passdown();  
+        x->right = y->left;
+        if(y->left != nullptr){
+            y->left->parent = x;
+        }
+        y->parent = x->parent;
+        if(x->parent == nullptr)
+            this->root = y;
+        else if (x == x->parent->left)
+            x->parent->left = y;
+        else
+            x->parent->right = y;
+        y->left = x;
+        x->parent = y;  
+        x->update();
+        y->update();
+        if(y->parent != nullptr)
+            y->parent->update();
+        return y;  
+    }  
+    void splay(node * x) {
+            while (x->parent) {
+                if (!x->parent->parent) {
+                    if (x == x->parent->left) {
+                        // zig rotation
+                        rightRotate(x->parent);
+                    } else {
+                        // zag rotation
+                        leftRotate(x->parent);
+                    }
+                } else if (x == x->parent->left && x->parent == x->parent->parent->left) {
+                    // zig-zig rotation
+                    rightRotate(x->parent->parent);
+                    rightRotate(x->parent);
+                } else if (x == x->parent->right && x->parent == x->parent->parent->right) {
+                    // zag-zag rotation
+                    leftRotate(x->parent->parent);
+                    leftRotate(x->parent);
+                } else if (x == x->parent->right && x->parent == x->parent->parent->left) {
+                    // zig-zag rotation
+                    leftRotate(x->parent);
+                    rightRotate(x->parent);
+                } else {
+                    // zag-zig rotation
+                    rightRotate(x->parent);
+                    leftRotate(x->parent);
+                }
+            }
+    }
+    node* search(node* node, int key) {
+            if (node == nullptr || key == node->key) {
+                return node;
+            }
+
+            if (key < node->key) {
+                return search(node->left, key);
+            } 
+            return search(node->right, key);
+    }
+    node * searchTree(int k) {
+            node * x = search(this->root, k);
+            if (x) {
+                splay(x);
+            }
+            return x;
+    }
+
+    void insert(int key) {
+            node* inode = new node(key);
+            node* y = nullptr;
+            node* x = this->root;
+
+            while (x != nullptr) {
+                y = x;
+                if (inode->key < x->key) {
+                    x = x->left;
+                } else {
+                    x = x->right;
+                }
+            }
+
+            inode->parent = y;
+            if (y == nullptr) {
+                this->root = inode;
+            } else if (inode->key < y->key) {
+                y->left = inode;
+            } else {
+                y->right = inode;
+            }
+            splay(inode);
+    }
+    
+};
+SplayTree base; 
+
+int main()
+{
+    #ifndef ONLINE_JUDGE
+        freopen("input.txt","r",stdin);
+        freopen("output.txt","w",stdout);
+    #endif
+    int a = 0;
+    for(int i = 0; i < 10; ++i)
+        base.insert(i);
+    return 0;
+}

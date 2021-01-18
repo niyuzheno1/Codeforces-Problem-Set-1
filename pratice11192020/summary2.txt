@@ -1,0 +1,20 @@
+Bad Triangle [solved it]
+Barrels [Give up]
+RPG Protagonist [Give up]
+Substring Removal Game [solved]
+Negative Prefixes [solved]
+Reverse Binary Strings [solved]
+Barrels [solved]
+
+$p,f$
+
+$x+y \leq cnt_s$
+
+$u+v \leq cnt_w$
+
+$sx + wu \leq p$
+
+
+$sy + wv \leq f$
+
+$ \max x+y+u+v$

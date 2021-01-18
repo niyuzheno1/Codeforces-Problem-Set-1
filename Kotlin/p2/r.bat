@@ -1,0 +1,1 @@
+kotlin SolKt < input.txt > output.txt
